@@ -61,7 +61,7 @@ export class Rate {
     type: String,
     required: true,
   })
-  professionnelId: string;
+  professionalId: string;
 
   @Prop({
     type: Date,

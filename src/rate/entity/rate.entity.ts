@@ -22,13 +22,13 @@ export class RateEntity {
   clientId: string;
 
   @ApiProperty({
-    name: 'professionnelId',
+    name: 'professionalId',
     description: 'id of the professionnel',
     example: '3',
   })
   @Expose()
   @Type(() => String)
-  professionnelId: string;
+  professionalId: string;
 
   @ApiProperty({ name: 'price', description: 'rate of price', example: '3' })
   @Expose()

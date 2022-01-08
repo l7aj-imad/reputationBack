@@ -6,10 +6,10 @@ server:
     - "http://127.0.0.1:4200"
     - "http://localhost:4200"
 swagger:
-  title: E-Reputation
+  title: e-Reputation
   description: API de l'e-Reputation
   version: 1.0
-  tag: E-Reputation
+  tag: e-Reputation
   path: documentation
 mongodb:
   login: 'root'

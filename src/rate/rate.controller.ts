@@ -10,7 +10,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { HandlerParams } from '../validators/handler-params';
+import {
+  HandlerParams,
+  ProfessionalHandlerParams,
+} from '../validators/handler-params';
 
 import {
   ApiBadRequestResponse,
@@ -83,6 +86,38 @@ export class RateController {
   @Get('findById/:id')
   findById(@Param() params: HandlerParams): Observable<RateEntity> {
     return this.__rateService.findById(params.id);
+  }
+
+  /**
+   * Handler to answer to GET /rate/findById/:id route
+   *
+   * @param {HandlerParams} params list of route params to take Rate id
+   *
+   * @returns Observable<RateEntity>
+   */
+  @ApiOkResponse({
+    description: 'Returns the rates for the given professional "id"',
+    type: RateEntity,
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Rate with the given professional "id" doesn\'t exist in the database',
+  })
+  @ApiBadRequestResponse({ description: 'Parameter provided is not good' })
+  @ApiUnprocessableEntityResponse({
+    description: "The request can't be performed in the database",
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Unique identifier of the professional in the database',
+    type: String,
+    allowEmptyValue: false,
+  })
+  @Get('findByProfessionalId/:id')
+  findByProfessionalId(
+    @Param() params: ProfessionalHandlerParams,
+  ): Observable<RateEntity[] | void> {
+    return this.__rateService.findByProfessionalId(params.id);
   }
 
   /**

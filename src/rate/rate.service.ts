@@ -54,6 +54,18 @@ export class RateService {
     );
 
   /**
+   * Returns all existing rates for a professional in the list
+   *
+   * @returns {Observable<RateEntity[] | void>}
+   */
+  findByProfessionalId = (id: string): Observable<RateEntity[] | void> =>
+    this._rateDao.findByProfessionalId(id).pipe(
+      filter((_: Rate[]) => !!_),
+      map((_: Rate[]) => _.map((__: Rate) => new RateEntity(__))),
+      defaultIfEmpty(undefined),
+    );
+
+  /**
    * Check if  already exists and add it in list
    *
    * @param rate to create

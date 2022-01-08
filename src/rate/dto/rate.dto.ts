@@ -12,12 +12,12 @@ export class RateDto {
   clientId: string;
 
   @ApiProperty({
-    name: 'professionnelId',
+    name: 'professionalId',
     description: 'ìd of the professionnel',
     example: '5763cd4dc378a38ecd387737',
   })
   @IsNotEmpty()
-  professionnelId: string;
+  professionalId: string;
 
   @ApiProperty({
     name: 'price',

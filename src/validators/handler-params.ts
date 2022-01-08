@@ -5,3 +5,8 @@ export class HandlerParams {
   @IsNotEmpty()
   id: string;
 }
+
+export class ProfessionalHandlerParams {
+  @IsNotEmpty()
+  id: string;
+}

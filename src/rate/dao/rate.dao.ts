@@ -33,6 +33,20 @@ export class RateDao {
     );
 
   /**
+   * Returns one Rate of the list matching professional id in parameter
+   *
+   * @param {string} id of the professional in the db
+   *
+   * @return {Observable<Rate | void>}
+   */
+  findByProfessionalId = (id: string): Observable<Rate[] | void> =>
+    from(this._rateModel.find({ professionalId: id })).pipe(
+      filter((docs: RateDocument[]) => !!docs && docs.length > 0),
+      map((docs: RateDocument[]) => docs.map((_: RateDocument) => _.toJSON())),
+      defaultIfEmpty([]),
+    );
+
+  /**
    * Returns  list of rates
    *
    * @return {Observable<Rate | void>}
