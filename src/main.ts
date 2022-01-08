@@ -1,9 +1,9 @@
-import {NestFactory} from '@nestjs/core';
-import {Logger, ValidationPipe} from '@nestjs/common';
-import {AppModule} from './app.module';
+import { NestFactory } from '@nestjs/core';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
 import * as Config from 'config';
-import {AppConfig, SwaggerConfig} from './app.types';
-import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import { AppConfig, SwaggerConfig } from './app.types';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap(config: AppConfig, swaggerConfig: SwaggerConfig) {
   // create NestJS application
@@ -14,20 +14,19 @@ async function bootstrap(config: AppConfig, swaggerConfig: SwaggerConfig) {
 
   // use global pipe validation
   await app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-
-      }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
   );
 
   // create swagger options
   const options = new DocumentBuilder()
-      .setTitle(swaggerConfig.title)
-      .setDescription(swaggerConfig.description)
-      .setVersion(swaggerConfig.version)
-      .addTag(swaggerConfig.tag)
-      .build();
+    .setTitle(swaggerConfig.title)
+    .setDescription(swaggerConfig.description)
+    .setVersion(swaggerConfig.version)
+    .addTag(swaggerConfig.tag)
+    .build();
 
   // create swagger document
   const linkDocument = SwaggerModule.createDocument(app, options, {
@@ -40,12 +39,12 @@ async function bootstrap(config: AppConfig, swaggerConfig: SwaggerConfig) {
   // launch server
   await app.listen(config.port, config.host);
   Logger.log(
-      `Application served at http://${config.host}:${config.port}`,
-      'bootstrap',
+    `Application served at http://${config.host}:${config.port}`,
+    'bootstrap',
   );
 }
 
 bootstrap(
-    Config.get<AppConfig>('server'),
-    Config.get<SwaggerConfig>('swagger'),
+  Config.get<AppConfig>('server'),
+  Config.get<SwaggerConfig>('swagger'),
 );
