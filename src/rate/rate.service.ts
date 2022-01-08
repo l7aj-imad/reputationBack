@@ -10,6 +10,7 @@ import { RateDao } from './dao/Rate.dao';
 import { RateEntity } from './entity/rate.entity';
 import { Rate } from './rate.schema';
 import { RateDto } from './dto/Rate.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class RateService {
@@ -58,12 +59,13 @@ export class RateService {
     /**
      * Check if  already exists and add it in list
      *
-     * @param Rate to create
+     * @param rate to create
      *
      * @returns {Observable<RateEntity>}
      */
-    add = (Rate: RateDto): Observable<RateEntity> => {
-        return this._rateDao.add(Rate).pipe(
+    add = (rate: RateDto): Observable<RateEntity> => {
+        rate.date = moment().utc().format()
+        return this._rateDao.add(rate).pipe(
             catchError((e) =>
                 throwError(() => new UnprocessableEntityException(e.message)),
             ),
