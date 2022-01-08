@@ -51,6 +51,25 @@ export class RateEntity {
     @Type(() => String)
     comment: string;
 
+    @ApiProperty({
+        name: 'anonymous',
+        description: 'comment of the user is anonymous?',
+        example: true,
+    })
+    @Expose()
+    @Type(() => Boolean)
+    anonymous: boolean;
+
+    @ApiProperty({
+        name: 'date',
+        description: 'date added',
+        example: '1994-11-05T13:15:30Z',
+    })
+    @Expose()
+    @Type(() => Date)
+    date: string;
+    
+
     constructor(partial: Partial<RateEntity>) {
         Object.assign(this, partial);
     }

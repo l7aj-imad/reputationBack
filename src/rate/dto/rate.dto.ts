@@ -9,7 +9,6 @@ export class RateDto {
         description: 'id of the client',
         example: '5763cd4dc378a38ecd387737',
     })
-    @IsDateString()
     @IsNotEmpty()
     clientId: string;
 
@@ -18,7 +17,6 @@ export class RateDto {
         description: 'ìd of the professionnel',
         example: '5763cd4dc378a38ecd387737',
     })
-    @IsDateString()
     @IsNotEmpty()
     professionnelId: string;
 
@@ -27,7 +25,6 @@ export class RateDto {
         description: 'price paid by client',
         example: 3,
     })
-    @IsDateString()
     @IsNotEmpty()
     price: number;
 
@@ -36,7 +33,6 @@ export class RateDto {
         description: 'duration of work',
         example: 3,
     })
-    @IsDateString()
     @IsNotEmpty()
     time: number;
 
@@ -45,7 +41,6 @@ export class RateDto {
         description: 'quality of work',
         example: 3,
     })
-    @IsDateString()
     @IsNotEmpty()
     quality: number;
 
@@ -54,7 +49,6 @@ export class RateDto {
         description: 'personality of professionnel',
         example: 3,
     })
-    @IsDateString()
     @IsNotEmpty()
     personality: number;
 
@@ -63,9 +57,26 @@ export class RateDto {
         description: 'comment of the user',
         example: 'nice work',
     })
-    @IsDateString()
     @IsOptional()
     comment: string;
+
+    @ApiProperty({
+        name: 'date',
+        description: 'date added',
+        example: '1994-11-05T13:15:30Z',
+    })
+    @IsNotEmpty()
+    @IsDateString() 
+    date: string;
+
+    @ApiProperty({
+        name: 'anonymous',
+        description: 'if comment is anonymous',
+        example: true,
+    })
+    @IsOptional()
+    anonymous: boolean;
+
 
     constructor(partial: Partial<RateEntity>) {
         Object.assign(this, partial);

@@ -55,6 +55,34 @@ export class Rate {
 
     })
     comment: string;
+
+    @Prop({
+        type: String,
+        required: true,
+
+    })
+    clientId: string;
+
+    @Prop({
+        type: String,
+        required: true,
+
+    })
+    professionnelId: string;
+
+    @Prop({
+        type: Date,
+        required: true,
+
+    })
+    date: string;
+
+    @Prop({
+        type: Boolean,
+        required: true,
+
+    })
+    anonymous: boolean;
 }
 
 export const RateSchema = SchemaFactory.createForClass(Rate);
