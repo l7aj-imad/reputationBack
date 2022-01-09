@@ -28,47 +28,47 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { HttpInterceptor } from '../interceptors/http.interceptor';
-import { RateService } from './rate.service';
-import { RateEntity } from './entity/rate.entity';
-import { RateDto } from './dto/rate.dto';
+import { RatingService } from './rating.service';
+import { RatingEntity } from './entity/rating.entity';
+import { RatingDto } from './dto/rating.dto';
 
 @ApiTags('rate')
 @Controller('rate')
 @UseInterceptors(ClassSerializerInterceptor)
 @UseInterceptors(HttpInterceptor)
-export class RateController {
+export class RatingController {
   /**
    * Class constructor
    * @param __rateService
    */
-  constructor(private readonly __rateService: RateService) {}
+  constructor(private readonly __rateService: RatingService) {}
 
   /**
-   * Handler to answer to GET /rate/all route
+   * Handler to answer to GET /rating/all route
    *
    * @returns Observable<RateEntity[] | void>
    */
   @ApiOkResponse({
     description: 'Returns an array of Rates',
-    type: RateEntity,
+    type: RatingEntity,
     isArray: true,
   })
   @ApiNoContentResponse({ description: 'No Rate exists in database' })
   @Get('/all')
-  find(): Observable<RateEntity[] | void> {
+  find(): Observable<RatingEntity[] | void> {
     return this.__rateService.find();
   }
 
   /**
-   * Handler to answer to GET /rate/findById/:id route
+   * Handler to answer to GET /rating/findById/:id route
    *
    * @param {HandlerParams} params list of route params to take Rate id
    *
-   * @returns Observable<RateEntity>
+   * @returns Observable<RatingEntity>
    */
   @ApiOkResponse({
     description: 'Returns the Rate for the given "id"',
-    type: RateEntity,
+    type: RatingEntity,
   })
   @ApiNotFoundResponse({
     description: 'Rate with the given "id" doesn\'t exist in the database',
@@ -84,20 +84,20 @@ export class RateController {
     allowEmptyValue: false,
   })
   @Get('findById/:id')
-  findById(@Param() params: HandlerParams): Observable<RateEntity> {
+  findById(@Param() params: HandlerParams): Observable<RatingEntity> {
     return this.__rateService.findById(params.id);
   }
 
   /**
-   * Handler to answer to GET /rate/findById/:id route
+   * Handler to answer to GET /rating/findById/:id route
    *
    * @param {HandlerParams} params list of route params to take Rate id
    *
-   * @returns Observable<RateEntity>
+   * @returns Observable<RatingEntity>
    */
   @ApiOkResponse({
     description: 'Returns the rates for the given professional "id"',
-    type: RateEntity,
+    type: RatingEntity,
   })
   @ApiNotFoundResponse({
     description:
@@ -116,20 +116,20 @@ export class RateController {
   @Get('findByProfessionalId/:id')
   findByProfessionalId(
     @Param() params: ProfessionalHandlerParams,
-  ): Observable<RateEntity[] | void> {
+  ): Observable<RatingEntity[] | void> {
     return this.__rateService.findByProfessionalId(params.id);
   }
 
   /**
-   * Handler to answer to POST /rate/add route
+   * Handler to answer to POST /rating/add route
    *
-   * @param RateDto data to create
+   * @param RatingDto data to create
    *
-   * @returns Observable<RateEntity>
+   * @returns Observable<RatingEntity>
    */
   @ApiCreatedResponse({
     description: 'The Rate has been successfully created',
-    type: RateEntity,
+    type: RatingEntity,
   })
   @ApiConflictResponse({
     description: 'The Rate already exists in the database',
@@ -140,24 +140,24 @@ export class RateController {
   })
   @ApiBody({
     description: 'Payload to create a new Rate',
-    type: RateDto,
+    type: RatingDto,
   })
   @Post('add')
-  add(@Body() RateDto: RateDto): Observable<RateEntity> {
-    return this.__rateService.add(RateDto);
+  add(@Body() RatingDto: RatingDto): Observable<RatingEntity> {
+    return this.__rateService.add(RatingDto);
   }
 
   /**
-   * Handler to answer to PUT /rate/update/:id route
+   * Handler to answer to PUT /rating/update/:id route
    *
    * @param {HandlerParams} params list of route params to take Rate id
-   * @param RateDto data to update
+   * @param RatingDto data to update
    *
-   * @returns Observable<RateEntity>
+   * @returns Observable<RatingEntity>
    */
   @ApiOkResponse({
     description: 'The Rate has been successfully updated',
-    type: RateEntity,
+    type: RatingEntity,
   })
   @ApiNotFoundResponse({
     description: 'Rate with the given "id" doesn\'t exist in the database',
@@ -177,17 +177,17 @@ export class RateController {
     type: String,
     allowEmptyValue: false,
   })
-  @ApiBody({ description: 'Payload to update a Rate', type: RateDto })
+  @ApiBody({ description: 'Payload to update a Rate', type: RatingDto })
   @Put('update/:id')
   update(
     @Param() params: HandlerParams,
-    @Body() RateDto: RateDto,
-  ): Observable<RateEntity> {
-    return this.__rateService.update(params.id, RateDto);
+    @Body() RatingDto: RatingDto,
+  ): Observable<RatingEntity> {
+    return this.__rateService.update(params.id, RatingDto);
   }
 
   /**
-   * Handler to answer to DELETE /rate/delete/:id route
+   * Handler to answer to DELETE /rating/delete/:id route
    *
    * @param {HandlerParams} params list of route params to take Rate id
    *

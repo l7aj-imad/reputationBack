@@ -24,30 +24,43 @@ export class Rate {
   @Prop({
     type: Number,
     required: true,
+    validate: function (r) {
+      return r >= 1 && r <= 5;
+    },
   })
   price: number;
 
   @Prop({
     type: Number,
     required: true,
+    validate: function (r) {
+      return r >= 1 && r <= 5;
+    },
   })
   time: number;
 
   @Prop({
     type: Number,
     required: true,
+    validate: function (r) {
+      return r >= 1 && r <= 5;
+    },
   })
   quality: number;
 
   @Prop({
     type: Number,
     required: true,
+    validate: function (r) {
+      return r >= 1 && r <= 5;
+    },
   })
   personality: number;
 
   @Prop({
     type: String,
-    required: true,
+    required: false,
+    default: '',
   })
   comment: string;
 
@@ -65,15 +78,18 @@ export class Rate {
 
   @Prop({
     type: Date,
-    required: true,
+    required: false,
+    set: () => new Date().toISOString(),
+    default: new Date().toISOString(),
   })
   date: string;
 
   @Prop({
     type: Boolean,
-    required: true,
+    required: false,
+    default: false,
   })
   anonymous: boolean;
 }
 
-export const RateSchema = SchemaFactory.createForClass(Rate);
+export const RatingSchema = SchemaFactory.createForClass(Rate);

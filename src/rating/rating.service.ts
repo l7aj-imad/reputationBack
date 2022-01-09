@@ -5,30 +5,30 @@ import {
 } from '@nestjs/common';
 import { catchError, defaultIfEmpty, Observable, of, throwError } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
-import { RateDao } from './dao/rate.dao';
-import { RateEntity } from './entity/rate.entity';
-import { Rate } from './rate.schema';
-import { RateDto } from './dto/rate.dto';
+import { RatingDao } from './dao/rating.dao';
+import { RatingEntity } from './entity/rating.entity';
+import { Rate } from './rating.schema';
+import { RatingDto } from './dto/rating.dto';
 import * as moment from 'moment';
 
 @Injectable()
-export class RateService {
+export class RatingService {
   /**
    * Class constructor
    *
-   * @param {RateDao} _rateDao instance of the DAO
+   * @param {RatingDao} _rateDao instance of the DAO
    */
-  constructor(private readonly _rateDao: RateDao) {}
+  constructor(private readonly _rateDao: RatingDao) {}
 
   /**
    * Returns all existing Rates in the list
    *
-   * @returns {Observable<RateEntity[] | void>}
+   * @returns {Observable<RatingEntity[] | void>}
    */
-  find = (): Observable<RateEntity[] | void> =>
+  find = (): Observable<RatingEntity[] | void> =>
     this._rateDao.find().pipe(
       filter((_: Rate[]) => !!_),
-      map((_: Rate[]) => _.map((__: Rate) => new RateEntity(__))),
+      map((_: Rate[]) => _.map((__: Rate) => new RatingEntity(__))),
       defaultIfEmpty(undefined),
     );
 
@@ -37,16 +37,16 @@ export class RateService {
    *
    * @param {string} id of the Rate
    *
-   * @returns {Observable<RateEntity>}
+   * @returns {Observable<RatingEntity>}
    */
-  findById = (id: string): Observable<RateEntity> =>
+  findById = (id: string): Observable<RatingEntity> =>
     this._rateDao.findById(id).pipe(
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
       mergeMap((_: Rate) =>
         !!_
-          ? of(new RateEntity(_))
+          ? of(new RatingEntity(_))
           : throwError(
               () => new NotFoundException(`Rate with id '${id}' not found`),
             ),
@@ -56,12 +56,12 @@ export class RateService {
   /**
    * Returns all existing rates for a professional in the list
    *
-   * @returns {Observable<RateEntity[] | void>}
+   * @returns {Observable<RatingEntity[] | void>}
    */
-  findByProfessionalId = (id: string): Observable<RateEntity[] | void> =>
+  findByProfessionalId = (id: string): Observable<RatingEntity[] | void> =>
     this._rateDao.findByProfessionalId(id).pipe(
       filter((_: Rate[]) => !!_),
-      map((_: Rate[]) => _.map((__: Rate) => new RateEntity(__))),
+      map((_: Rate[]) => _.map((__: Rate) => new RatingEntity(__))),
       defaultIfEmpty(undefined),
     );
 
@@ -70,15 +70,15 @@ export class RateService {
    *
    * @param rate to create
    *
-   * @returns {Observable<RateEntity>}
+   * @returns {Observable<RatingEntity>}
    */
-  add = (rate: RateDto): Observable<RateEntity> => {
+  add = (rate: RatingDto): Observable<RatingEntity> => {
     rate.date = moment().utc().format();
     return this._rateDao.add(rate).pipe(
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
-      map((_: Rate) => new RateEntity(_)),
+      map((_: Rate) => new RatingEntity(_)),
     );
   };
 
@@ -88,15 +88,15 @@ export class RateService {
    * @param {string} id
    * @param Rate data to update
    *
-   * @returns {Observable<RateEntity>}
+   * @returns {Observable<RatingEntity>}
    */
-  update = (id: string, Rate: RateDto): Observable<RateEntity> =>
+  update = (id: string, Rate: RatingDto): Observable<RatingEntity> =>
     this._rateDao
       .update(id, Rate)
       .pipe(
         mergeMap((_: Rate) =>
           !!_
-            ? of(new RateEntity(_))
+            ? of(new RatingEntity(_))
             : throwError(
                 () => new NotFoundException(`Rate with id '${id}' not found`),
               ),

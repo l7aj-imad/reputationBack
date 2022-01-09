@@ -1,8 +1,8 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
 @Exclude()
-export class RateEntity {
+export class RatingEntity {
   @ApiProperty({
     name: 'id',
     description: 'Unique identifier in the database',
@@ -30,19 +30,27 @@ export class RateEntity {
   @Type(() => String)
   professionalId: string;
 
-  @ApiProperty({ name: 'price', description: 'rate of price', example: '3' })
+  @ApiProperty({
+    name: 'price',
+    description: 'rating concerning the price paid by client',
+    example: '3',
+  })
   @Expose()
   @Type(() => String)
   price: number;
 
-  @ApiProperty({ name: 'time', description: 'rate of time', example: '3' })
+  @ApiProperty({
+    name: 'time',
+    description: 'rating concerning the duration of work',
+    example: '3',
+  })
   @Expose()
   @Type(() => String)
   time: number;
 
   @ApiProperty({
     name: 'quality',
-    description: 'rate of quality',
+    description: 'rating concerning the quality of work',
     example: '3',
   })
   @Expose()
@@ -51,7 +59,7 @@ export class RateEntity {
 
   @ApiProperty({
     name: 'personality',
-    description: 'rate of personality',
+    description: 'rating concerning the personality of the professional',
     example: '3',
   })
   @Expose()
@@ -62,6 +70,7 @@ export class RateEntity {
     name: 'comment',
     description: 'comment of the user on the work',
     example: 'very nice work',
+    required: false,
   })
   @Expose()
   @Type(() => String)
@@ -69,8 +78,9 @@ export class RateEntity {
 
   @ApiProperty({
     name: 'anonymous',
-    description: 'comment of the user is anonymous?',
-    example: true,
+    description:
+      'allow or disallow the professional to be notified of the rating',
+    example: false,
   })
   @Expose()
   @Type(() => Boolean)
@@ -78,14 +88,16 @@ export class RateEntity {
 
   @ApiProperty({
     name: 'date',
-    description: 'date added',
-    example: '1994-11-05T13:15:30Z',
+    description: 'date on which the comment was created',
+    example: new Date().toISOString(),
+    required: false,
   })
+  @ApiHideProperty()
   @Expose()
   @Type(() => Date)
   date: string;
 
-  constructor(partial: Partial<RateEntity>) {
+  constructor(partial: Partial<RatingEntity>) {
     Object.assign(this, partial);
   }
 }

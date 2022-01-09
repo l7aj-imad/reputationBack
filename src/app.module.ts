@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RateModule } from './rate/rate.module';
+import { RatingModule } from './rating/rating.module';
 import * as Config from 'config';
 
 @Module({
   imports: [
-    RateModule,
+    RatingModule,
     MongooseModule.forRoot(
       Config.get<string>('mongodb.uri_prefix') +
         (Config.get<string>('mongodb.login')

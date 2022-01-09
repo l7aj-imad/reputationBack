@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Rate, RateDocument } from '../rate.schema';
+import { Rate, RateDocument } from '../rating.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { defaultIfEmpty, from, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { RateDto } from '../dto/rate.dto';
+import { RatingDto } from '../dto/rating.dto';
 
 @Injectable()
-export class RateDao {
+export class RatingDao {
   /**
    * Class constructor
    *
@@ -62,11 +62,11 @@ export class RateDao {
   /**
    * Check if name already exists with index and add it in Rate list
    *
-   * @param {RateDto} rate to create
+   * @param {RatingDto} rate to create
    *
    * @return {Observable<Rate>}
    */
-  add = (rate: RateDto): Observable<Rate> =>
+  add = (rate: RatingDto): Observable<Rate> =>
     from(new this._rateModel(rate).save()).pipe(
       map((doc: RateDocument) => doc.toJSON()),
       defaultIfEmpty(undefined),
@@ -76,11 +76,11 @@ export class RateDao {
    * Update
    *
    * @param {string} id
-   * @param {RateDto} Rate
+   * @param {RatingDto} Rate
    *
    * @return {Observable<Rate | void>}
    */
-  update = (id: string, Rate: RateDto): Observable<Rate | void> =>
+  update = (id: string, Rate: RatingDto): Observable<Rate | void> =>
     from(
       this._rateModel.findByIdAndUpdate(id, Rate, {
         new: true,
