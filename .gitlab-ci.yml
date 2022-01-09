@@ -1,0 +1,19 @@
+stages:
+  - package
+
+docker-build:
+  image: docker:stable
+  only :
+    - master
+    - dev
+
+  stage: package
+  services:
+    - docker:dind
+  before_script:
+    - echo $CI_BUILD_TOKEN | docker login -u "$CI_REGISTRY_USER"
+      --password-stdin $CI_REGISTRY
+  script:
+    - IMAGE_NAME="$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - docker build --pull -t "$IMAGE_NAME" -f Dockerfile .
+    - docker push "$IMAGE_NAME"
