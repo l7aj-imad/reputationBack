@@ -7,7 +7,7 @@ import { catchError, defaultIfEmpty, Observable, of, throwError } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
 import { RatingDao } from './dao/rating.dao';
 import { RatingEntity } from './entity/rating.entity';
-import { Rate } from './rating.schema';
+import { Rating } from './rating.schema';
 import { RatingDto } from './dto/rating.dto';
 import * as moment from 'moment';
 
@@ -27,8 +27,8 @@ export class RatingService {
    */
   find = (): Observable<RatingEntity[] | void> =>
     this._rateDao.find().pipe(
-      filter((_: Rate[]) => !!_),
-      map((_: Rate[]) => _.map((__: Rate) => new RatingEntity(__))),
+      filter((_: Rating[]) => !!_),
+      map((_: Rating[]) => _.map((__: Rating) => new RatingEntity(__))),
       defaultIfEmpty(undefined),
     );
 
@@ -44,7 +44,7 @@ export class RatingService {
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
-      mergeMap((_: Rate) =>
+      mergeMap((_: Rating) =>
         !!_
           ? of(new RatingEntity(_))
           : throwError(
@@ -60,8 +60,8 @@ export class RatingService {
    */
   findByProfessionalId = (id: string): Observable<RatingEntity[] | void> =>
     this._rateDao.findByProfessionalId(id).pipe(
-      filter((_: Rate[]) => !!_),
-      map((_: Rate[]) => _.map((__: Rate) => new RatingEntity(__))),
+      filter((_: Rating[]) => !!_),
+      map((_: Rating[]) => _.map((__: Rating) => new RatingEntity(__))),
       defaultIfEmpty(undefined),
     );
 
@@ -78,7 +78,7 @@ export class RatingService {
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
-      map((_: Rate) => new RatingEntity(_)),
+      map((_: Rating) => new RatingEntity(_)),
     );
   };
 
@@ -94,7 +94,7 @@ export class RatingService {
     this._rateDao
       .update(id, Rate)
       .pipe(
-        mergeMap((_: Rate) =>
+        mergeMap((_: Rating) =>
           !!_
             ? of(new RatingEntity(_))
             : throwError(
@@ -115,7 +115,7 @@ export class RatingService {
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
-      mergeMap((_: Rate) =>
+      mergeMap((_: Rating) =>
         !!_
           ? of(undefined)
           : throwError(

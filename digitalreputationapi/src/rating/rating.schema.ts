@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export type RateDocument = Rate & Document;
+export type RateDocument = Rating & Document;
 
 @Schema({
   toJSON: {
@@ -14,7 +14,7 @@ export type RateDocument = Rate & Document;
   },
   versionKey: false,
 })
-export class Rate {
+export class Rating {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     auto: true,
@@ -92,4 +92,4 @@ export class Rate {
   anonymous: boolean;
 }
 
-export const RatingSchema = SchemaFactory.createForClass(Rate);
+export const RatingSchema = SchemaFactory.createForClass(Rating);

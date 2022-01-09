@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Rate, RateDocument } from '../rating.schema';
+import { Rating, RateDocument } from '../rating.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { defaultIfEmpty, from, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -14,7 +14,7 @@ export class RatingDao {
    * @param {Model<RateDocument>} _rateModel instance of the model representing a Rate
    */
   constructor(
-    @InjectModel(Rate.name)
+    @InjectModel(Rating.name)
     private readonly _rateModel: Model<RateDocument>,
   ) {}
 
@@ -23,9 +23,9 @@ export class RatingDao {
    *
    * @param {string} id of the Rate in the db
    *
-   * @return {Observable<Rate | void>}
+   * @return {Observable<Rating | void>}
    */
-  findById = (id: string): Observable<Rate | void> =>
+  findById = (id: string): Observable<Rating | void> =>
     from(this._rateModel.findById(id)).pipe(
       filter((doc: RateDocument) => !!doc),
       map((doc: RateDocument) => doc.toJSON()),
@@ -37,9 +37,9 @@ export class RatingDao {
    *
    * @param {string} id of the professional in the db
    *
-   * @return {Observable<Rate | void>}
+   * @return {Observable<Rating | void>}
    */
-  findByProfessionalId = (id: string): Observable<Rate[] | void> =>
+  findByProfessionalId = (id: string): Observable<Rating[] | void> =>
     from(this._rateModel.find({ professionalId: id })).pipe(
       filter((docs: RateDocument[]) => !!docs && docs.length > 0),
       map((docs: RateDocument[]) => docs.map((_: RateDocument) => _.toJSON())),
@@ -49,9 +49,9 @@ export class RatingDao {
   /**
    * Returns  list of rates
    *
-   * @return {Observable<Rate | void>}
+   * @return {Observable<Rating | void>}
    */
-  find = (): Observable<Rate[] | void> => {
+  find = (): Observable<Rating[] | void> => {
     return from(this._rateModel.find()).pipe(
       filter((docs: RateDocument[]) => !!docs && docs.length > 0),
       map((docs: RateDocument[]) => docs.map((_: RateDocument) => _.toJSON())),
@@ -64,9 +64,9 @@ export class RatingDao {
    *
    * @param {RatingDto} rate to create
    *
-   * @return {Observable<Rate>}
+   * @return {Observable<Rating>}
    */
-  add = (rate: RatingDto): Observable<Rate> =>
+  add = (rate: RatingDto): Observable<Rating> =>
     from(new this._rateModel(rate).save()).pipe(
       map((doc: RateDocument) => doc.toJSON()),
       defaultIfEmpty(undefined),
@@ -78,9 +78,9 @@ export class RatingDao {
    * @param {string} id
    * @param {RatingDto} Rate
    *
-   * @return {Observable<Rate | void>}
+   * @return {Observable<Rating | void>}
    */
-  update = (id: string, Rate: RatingDto): Observable<Rate | void> =>
+  update = (id: string, Rate: RatingDto): Observable<Rating | void> =>
     from(
       this._rateModel.findByIdAndUpdate(id, Rate, {
         new: true,
@@ -97,9 +97,9 @@ export class RatingDao {
    *
    * @param {string} id
    *
-   * @return {Observable<Rate | void>}
+   * @return {Observable<Rating | void>}
    */
-  delete = (id: string): Observable<Rate | void> =>
+  delete = (id: string): Observable<Rating | void> =>
     from(this._rateModel.findByIdAndRemove(id)).pipe(
       filter((doc: RateDocument) => !!doc),
       map((doc: RateDocument) => doc.toJSON()),
