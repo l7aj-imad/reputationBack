@@ -1,15 +1,7 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class HandlerParams {
-  @IsMongoId()
+  @IsString()
   @IsNotEmpty()
   id: string;
-
-  @IsNotEmpty()
-  @IsString()
-  professionalId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  taskId: string;
 }

@@ -22,6 +22,7 @@ import {
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { HttpInterceptor } from '../interceptors/http.interceptor';
@@ -30,6 +31,7 @@ import { RatingEntity } from './entity/rating.entity';
 import { RatingDto } from './dto/rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
 import { UpdateHandlerParams } from '../validators/update-handler-params';
+import { DeleteHandlerParams } from '../validators/delete-handler-params';
 
 @ApiTags('rate')
 @Controller('rate')
@@ -48,66 +50,39 @@ export class RatingController {
    * @returns Observable<RateEntity[] | void>
    */
   @ApiOkResponse({
-    description: 'Returns an array of Rates',
+    description: 'Returns an array of ratings',
     type: RatingEntity,
     isArray: true,
   })
-  @ApiNoContentResponse({ description: 'No Rate exists in database' })
+  @ApiNoContentResponse({ description: 'No rating exists in database' })
   @Get('/all')
   find(): Observable<RatingEntity[] | void> {
     return this.__rateService.find();
   }
 
   /**
-   * Handler to answer to GET /rating/findByTaskId/:id route
+   * Handler to answer to GET /rating/findById/:id route for a rating or a rating associated to a task id
    *
-   * @param {HandlerParams} params list of route params to take the task ID param
+   * @param {HandlerParams} params list of route params to take a rating or task id
    *
    * @returns Observable<RatingEntity>
    */
   @ApiOkResponse({
-    description: 'Returns the Rate for the given "id"',
+    description: 'Returns the rating for the given "id"',
     type: RatingEntity,
   })
   @ApiNotFoundResponse({
-    description: 'Rate with the given "id" doesn\'t exist in the database',
+    description: 'Rating with the given "id" doesn\'t exist in the database',
   })
-  @ApiBadRequestResponse({ description: 'Parameter provided is not good' })
+  @ApiBadRequestResponse({
+    description: 'Some of the provided parameters are unexpected',
+  })
   @ApiUnprocessableEntityResponse({
     description: "The request can't be performed in the database",
   })
   @ApiParam({
     name: 'id',
-    description: 'Unique identifier of the Rate in the database',
-    type: String,
-    allowEmptyValue: false,
-  })
-  @Get('findByTaskId/:id')
-  findByTaskId(@Param() params: HandlerParams): Observable<RatingEntity> {
-    return this.__rateService.findByTaskId(params.taskId);
-  }
-
-  /**
-   * Handler to answer to GET /rating/findById/:id route
-   *
-   * @param {HandlerParams} params list of route params to take Rate id
-   *
-   * @returns Observable<RatingEntity>
-   */
-  @ApiOkResponse({
-    description: 'Returns the Rate for the given "id"',
-    type: RatingEntity,
-  })
-  @ApiNotFoundResponse({
-    description: 'Rate with the given "id" doesn\'t exist in the database',
-  })
-  @ApiBadRequestResponse({ description: 'Parameter provided is not good' })
-  @ApiUnprocessableEntityResponse({
-    description: "The request can't be performed in the database",
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Unique identifier of the Rate in the database',
+    description: 'Unique identifier of the rating in the database',
     type: String,
     allowEmptyValue: false,
   })
@@ -119,19 +94,17 @@ export class RatingController {
   /**
    * Handler to answer to GET /rating/findById/:id route
    *
-   * @param {HandlerParams} params list of route params to take Rate id
+   * @param {HandlerParams} params list of route params to take a rating or task id
    *
    * @returns Observable<RatingEntity>
    */
   @ApiOkResponse({
-    description: 'Returns the rates for the given professional "id"',
+    description: 'Returns the ratings for the given professional "id"',
     type: RatingEntity,
   })
-  @ApiNotFoundResponse({
-    description:
-      'Rate with the given professional "id" doesn\'t exist in the database',
+  @ApiBadRequestResponse({
+    description: 'Some of the provided parameters are unexpected',
   })
-  @ApiBadRequestResponse({ description: 'Parameter provided is not good' })
   @ApiUnprocessableEntityResponse({
     description: "The request can't be performed in the database",
   })
@@ -145,26 +118,29 @@ export class RatingController {
   findByProfessionalId(
     @Param() params: HandlerParams,
   ): Observable<RatingEntity[] | void> {
-    return this.__rateService.findByProfessionalId(params.professionalId);
+    return this.__rateService.findByProfessionalId(params.id);
   }
 
   /**
    * Handler to answer to POST /rating/add route
    *
-   * @param ratingDto data to create
+   * @param ratingDto New rating to create
    *
    * @returns Observable<RatingEntity>
    */
   @ApiCreatedResponse({
-    description: 'The Rate has been successfully created',
+    description: 'The rating has been successfully created',
     type: RatingEntity,
   })
   @ApiConflictResponse({
-    description: 'The Rate already exists in the database',
+    description: 'The rating already exists in the database',
   })
   @ApiBadRequestResponse({ description: 'Payload provided is not good' })
   @ApiUnprocessableEntityResponse({
     description: "The request can't be performed in the database",
+  })
+  @ApiUnauthorizedResponse({
+    description: "The rating isn't associated with any existing task",
   })
   @ApiBody({
     description: 'Payload to create a new Rate',
@@ -178,20 +154,20 @@ export class RatingController {
   /**
    * Handler to answer to PUT /rating/update/:id route
    *
-   * @param {HandlerParams} params list of route params to take Rate id
+   * @param {HandlerParams} params list of route params to take Rating id
    * @param ratingDto data to update
    *
    * @returns Observable<RatingEntity>
    */
   @ApiOkResponse({
-    description: 'The Rate has been successfully updated',
+    description: 'The rating has been successfully updated',
     type: RatingEntity,
   })
   @ApiNotFoundResponse({
-    description: 'Rate with the given "id" doesn\'t exist in the database',
+    description: 'Rating with the given "id" doesn\'t exist in the database',
   })
   @ApiConflictResponse({
-    description: 'The Rate already exists in the database',
+    description: 'The rating already exists in the database',
   })
   @ApiBadRequestResponse({
     description: 'Parameter and/or payload provided are not good',
@@ -201,7 +177,7 @@ export class RatingController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Unique identifier of the Rate in the database',
+    description: 'Unique identifier of the rating in the database',
     type: String,
     allowEmptyValue: false,
   })
@@ -217,28 +193,30 @@ export class RatingController {
   /**
    * Handler to answer to DELETE /rating/delete/:id route
    *
-   * @param {HandlerParams} params list of route params to take Rate id
+   * @param {HandlerParams} params list of route params to take a rating or task id
    *
    * @returns Observable<void>
    */
   @ApiNoContentResponse({
-    description: 'The Rate has been successfully deleted',
+    description: 'The rating has been successfully deleted',
   })
   @ApiNotFoundResponse({
-    description: 'Rate with the given "id" doesn\'t exist in the database',
+    description: 'Rating with the given "id" doesn\'t exist in the database',
   })
-  @ApiBadRequestResponse({ description: 'Parameter provided is not good' })
+  @ApiBadRequestResponse({
+    description: 'Some of the provided parameters are unexpected',
+  })
   @ApiUnprocessableEntityResponse({
     description: "The request can't be performed in the database",
   })
   @ApiParam({
     name: 'id',
-    description: 'Unique identifier of the Rate in the database',
+    description: 'Unique identifier of the rating in the database',
     type: String,
     allowEmptyValue: false,
   })
   @Delete('delete/:id')
-  delete(@Param() params: HandlerParams): Observable<void> {
+  delete(@Param() params: DeleteHandlerParams): Observable<void> {
     return this.__rateService.delete(params.id);
   }
 }

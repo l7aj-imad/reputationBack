@@ -1,7 +1,9 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { catchError, defaultIfEmpty, Observable, of, throwError } from 'rxjs';
@@ -118,11 +120,18 @@ export class RatingService {
     return this._ratingDao.add(rating).pipe(
       catchError((e) =>
         throwError(() => {
-          switch (e.code) {
-            case 11000:
-              return new ConflictException(
-                'A rating associated to this task already exists',
-              );
+          if (e.code == 11000) {
+            throw new ConflictException(
+              'A rating associated to this ID or task ID already exists',
+            );
+          } else if (e.status == 500) {
+            throw new InternalServerErrorException(e.message);
+          } else if (e.status == 401) {
+            throw new UnauthorizedException(
+              "There isn't any task associated to this task ID",
+            );
+          } else {
+            throw new UnprocessableEntityException(e.message);
           }
         }),
       ),

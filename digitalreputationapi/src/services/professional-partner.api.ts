@@ -1,5 +1,6 @@
 import * as Config from 'config';
 import {
+  catchError,
   defaultIfEmpty,
   mergeMap,
   Observable,
@@ -8,7 +9,8 @@ import {
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+
 /**
  * Caller vers l'API de Professional Partner
  */
@@ -20,9 +22,9 @@ export class ProfessionalPartnerAPI {
     const ret = {};
     let back = `${Config.get(
       'api.professional_partner.protocol',
-    )}://${Config.get('api.professional_partner.host')}}`;
+    )}://${Config.get('api.professional_partner.host')}`;
     if (Config.get('api.professional_partner.port')) {
-      back += `:${Config.get('api.professional_partner.port')}}`;
+      back += `:${Config.get('api.professional_partner.port')}/`;
     }
     Object.keys(Config.get('api.professional_partner.uri')).forEach(
       (k) =>
@@ -37,10 +39,17 @@ export class ProfessionalPartnerAPI {
    * @param id Identifiant de la tâche
    */
   exists(id: string): Observable<boolean> {
-    return this._http.get<boolean>(this._backends.task.replace(id)).pipe(
+    return this._http.get<any>(this._backends.task.replace(':id', id)).pipe(
+      catchError(() => {
+        throw new InternalServerErrorException(
+          'An error occured while trying to access the Professional Partners API',
+        );
+      }),
       filter((_) => !!_),
       defaultIfEmpty(false),
-      mergeMap<boolean, ObservableInput<boolean>>((_) => of(_)),
+      mergeMap<any, ObservableInput<boolean>>((_) => {
+        return of(!!_.data);
+      }),
     );
   }
 }

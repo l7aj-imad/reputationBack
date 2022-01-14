@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { RateDocument, Rating } from '../rating.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { defaultIfEmpty, from, Observable } from 'rxjs';
+import { defaultIfEmpty, from, mergeMap, Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { RatingDto } from '../dto/rating.dto';
 import { UpdateRatingDto } from '../dto/update-rating.dto';
+import { ProfessionalPartnerAPI } from '../../services/professional-partner.api';
 
 @Injectable()
 export class RatingDao {
@@ -13,10 +14,12 @@ export class RatingDao {
    * Class constructor
    *
    * @param {Model<RateDocument>} _rateModel instance of the model representing a Rate
+   * @param _ppApi API Professional Partner
    */
   constructor(
     @InjectModel(Rating.name)
     private readonly _rateModel: Model<RateDocument>,
+    private readonly _ppApi: ProfessionalPartnerAPI,
   ) {}
 
   /**
@@ -42,7 +45,7 @@ export class RatingDao {
    */
   findById = (id: string): Observable<Rating | void> =>
     from(
-      this._rateModel.find(() =>
+      this._rateModel.findOne(
         Types.ObjectId.isValid(id)
           ? { $or: [{ _id: id }, { taskId: id }] }
           : { taskId: id },
@@ -74,11 +77,23 @@ export class RatingDao {
    * @return {Observable<Rating>}
    */
   add = (rating: RatingDto): Observable<Rating> =>
-    from(new this._rateModel(rating).save()).pipe(
-      map((doc: RateDocument) => doc.toJSON()),
-      defaultIfEmpty(undefined),
+    of(null).pipe(
+      mergeMap(() => {
+        return this._ppApi.exists(rating.taskId);
+      }),
+      mergeMap((exists: boolean) => {
+        if (exists) {
+          return from(new this._rateModel(rating).save()).pipe(
+            map((doc: RateDocument) => doc.toJSON()),
+            defaultIfEmpty(undefined),
+          );
+        } else {
+          throw new UnauthorizedException(
+            "There isn't any task associated to this task ID",
+          );
+        }
+      }),
     );
-
   /**
    * Update the rating
    *
