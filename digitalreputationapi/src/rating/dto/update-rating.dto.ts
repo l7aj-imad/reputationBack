@@ -9,34 +9,7 @@ import {
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { RatingEntity } from '../entity/rating.entity';
 
-export class RatingDto {
-  @ApiProperty({
-    name: 'taskId',
-    description: 'id of the task',
-    example: '5763cd4dc378a38ecd387737',
-  })
-  @IsNotEmpty()
-  @IsString()
-  taskId: string;
-
-  @ApiProperty({
-    name: 'clientId',
-    description: 'id of the client',
-    example: '5763cd4dc378a38ecd387737',
-  })
-  @IsNotEmpty()
-  @IsString()
-  clientId: string;
-
-  @ApiProperty({
-    name: 'professionalId',
-    description: 'ìd of the professional',
-    example: '5763cd4dc378a38ecd387737',
-  })
-  @IsNotEmpty()
-  @IsString()
-  professionalId: string;
-
+export class UpdateRatingDto {
   @ApiProperty({
     name: 'price',
     description: 'rating concerning the price paid by client',

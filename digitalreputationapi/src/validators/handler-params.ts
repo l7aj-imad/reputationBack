@@ -4,10 +4,12 @@ export class HandlerParams {
   @IsMongoId()
   @IsNotEmpty()
   id: string;
-}
 
-export class ProfessionalHandlerParams {
   @IsNotEmpty()
   @IsString()
-  id: string;
+  professionalId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  taskId: string;
 }

@@ -10,10 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import {
-  HandlerParams,
-  ProfessionalHandlerParams,
-} from '../validators/handler-params';
+import { HandlerParams } from '../validators/handler-params';
 
 import {
   ApiBadRequestResponse,
@@ -31,6 +28,8 @@ import { HttpInterceptor } from '../interceptors/http.interceptor';
 import { RatingService } from './rating.service';
 import { RatingEntity } from './entity/rating.entity';
 import { RatingDto } from './dto/rating.dto';
+import { UpdateRatingDto } from './dto/update-rating.dto';
+import { UpdateHandlerParams } from '../validators/update-handler-params';
 
 @ApiTags('rate')
 @Controller('rate')
@@ -57,6 +56,35 @@ export class RatingController {
   @Get('/all')
   find(): Observable<RatingEntity[] | void> {
     return this.__rateService.find();
+  }
+
+  /**
+   * Handler to answer to GET /rating/findByTaskId/:id route
+   *
+   * @param {HandlerParams} params list of route params to take the task ID param
+   *
+   * @returns Observable<RatingEntity>
+   */
+  @ApiOkResponse({
+    description: 'Returns the Rate for the given "id"',
+    type: RatingEntity,
+  })
+  @ApiNotFoundResponse({
+    description: 'Rate with the given "id" doesn\'t exist in the database',
+  })
+  @ApiBadRequestResponse({ description: 'Parameter provided is not good' })
+  @ApiUnprocessableEntityResponse({
+    description: "The request can't be performed in the database",
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Unique identifier of the Rate in the database',
+    type: String,
+    allowEmptyValue: false,
+  })
+  @Get('findByTaskId/:id')
+  findByTaskId(@Param() params: HandlerParams): Observable<RatingEntity> {
+    return this.__rateService.findByTaskId(params.taskId);
   }
 
   /**
@@ -115,15 +143,15 @@ export class RatingController {
   })
   @Get('findByProfessionalId/:id')
   findByProfessionalId(
-    @Param() params: ProfessionalHandlerParams,
+    @Param() params: HandlerParams,
   ): Observable<RatingEntity[] | void> {
-    return this.__rateService.findByProfessionalId(params.id);
+    return this.__rateService.findByProfessionalId(params.professionalId);
   }
 
   /**
    * Handler to answer to POST /rating/add route
    *
-   * @param RatingDto data to create
+   * @param ratingDto data to create
    *
    * @returns Observable<RatingEntity>
    */
@@ -143,15 +171,15 @@ export class RatingController {
     type: RatingDto,
   })
   @Post('add')
-  add(@Body() RatingDto: RatingDto): Observable<RatingEntity> {
-    return this.__rateService.add(RatingDto);
+  add(@Body() ratingDto: RatingDto): Observable<RatingEntity> {
+    return this.__rateService.add(ratingDto);
   }
 
   /**
    * Handler to answer to PUT /rating/update/:id route
    *
    * @param {HandlerParams} params list of route params to take Rate id
-   * @param RatingDto data to update
+   * @param ratingDto data to update
    *
    * @returns Observable<RatingEntity>
    */
@@ -177,13 +205,13 @@ export class RatingController {
     type: String,
     allowEmptyValue: false,
   })
-  @ApiBody({ description: 'Payload to update a Rate', type: RatingDto })
+  @ApiBody({ description: 'Payload to update a Rate', type: UpdateRatingDto })
   @Put('update/:id')
   update(
-    @Param() params: HandlerParams,
-    @Body() RatingDto: RatingDto,
+    @Param() params: UpdateHandlerParams,
+    @Body() ratingDto: UpdateRatingDto,
   ): Observable<RatingEntity> {
-    return this.__rateService.update(params.id, RatingDto);
+    return this.__rateService.update(params.id, ratingDto);
   }
 
   /**

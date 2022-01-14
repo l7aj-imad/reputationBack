@@ -22,6 +22,25 @@ export class Rating {
   _id: any;
 
   @Prop({
+    type: String,
+    required: true,
+    unique: true,
+  })
+  taskId: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  clientId: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  professionalId: string;
+
+  @Prop({
     type: Number,
     required: true,
     validate: function (r) {
@@ -63,18 +82,6 @@ export class Rating {
     default: '',
   })
   comment: string;
-
-  @Prop({
-    type: String,
-    required: true,
-  })
-  clientId: string;
-
-  @Prop({
-    type: String,
-    required: true,
-  })
-  professionalId: string;
 
   @Prop({
     type: Date,

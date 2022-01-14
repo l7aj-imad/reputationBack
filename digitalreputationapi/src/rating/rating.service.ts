@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -10,37 +11,43 @@ import { RatingEntity } from './entity/rating.entity';
 import { Rating } from './rating.schema';
 import { RatingDto } from './dto/rating.dto';
 import * as moment from 'moment';
+import { ProfessionalPartnerAPI } from '../services/professional-partner.api';
+import { UpdateRatingDto } from './dto/update-rating.dto';
 
 @Injectable()
 export class RatingService {
   /**
    * Class constructor
    *
-   * @param {RatingDao} _rateDao instance of the DAO
+   * @param {RatingDao} _ratingDao instance of the DAO
+   * @param _ppApi Accès à l'API Professional Partner
    */
-  constructor(private readonly _rateDao: RatingDao) {}
+  constructor(
+    private readonly _ratingDao: RatingDao,
+    private _ppApi: ProfessionalPartnerAPI,
+  ) {}
 
   /**
-   * Returns all existing Rates in the list
+   * Returns all existing Ratings in the list
    *
    * @returns {Observable<RatingEntity[] | void>}
    */
   find = (): Observable<RatingEntity[] | void> =>
-    this._rateDao.find().pipe(
+    this._ratingDao.find().pipe(
       filter((_: Rating[]) => !!_),
       map((_: Rating[]) => _.map((__: Rating) => new RatingEntity(__))),
       defaultIfEmpty(undefined),
     );
 
   /**
-   * Returns one Rate of the list matching id in parameter
+   * Returns one Rating of the list matching id in parameter
    *
-   * @param {string} id of the Rate
+   * @param {string} id of the Rating
    *
    * @returns {Observable<RatingEntity>}
    */
   findById = (id: string): Observable<RatingEntity> =>
-    this._rateDao.findById(id).pipe(
+    this._ratingDao.findById(id).pipe(
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
@@ -48,35 +55,76 @@ export class RatingService {
         !!_
           ? of(new RatingEntity(_))
           : throwError(
-              () => new NotFoundException(`Rate with id '${id}' not found`),
+              () => new NotFoundException(`Rating with id '${id}' not found`),
             ),
       ),
     );
 
   /**
-   * Returns all existing rates for a professional in the list
+   * Returns all existing Ratings for a professional in the list
    *
    * @returns {Observable<RatingEntity[] | void>}
    */
   findByProfessionalId = (id: string): Observable<RatingEntity[] | void> =>
-    this._rateDao.findByProfessionalId(id).pipe(
+    this._ratingDao.findByProfessionalId(id).pipe(
       filter((_: Rating[]) => !!_),
       map((_: Rating[]) => _.map((__: Rating) => new RatingEntity(__))),
       defaultIfEmpty(undefined),
     );
 
   /**
-   * Check if  already exists and add it in list
+   * Returns a rating for a task id
    *
-   * @param rate to create
+   * @returns {Observable<RatingEntity | void>}
+   */
+  findByTaskId = (taskId: string): Observable<RatingEntity> =>
+    this._ppApi.exists(taskId).pipe(
+      catchError((e) =>
+        throwError(() => new UnprocessableEntityException(e.message)),
+      ),
+      mergeMap((_: boolean) =>
+        !!_
+          ? this._ratingDao.findById(taskId).pipe(
+              catchError((e) =>
+                throwError(() => new UnprocessableEntityException(e.message)),
+              ),
+              mergeMap((_: Rating) =>
+                !!_
+                  ? of(new RatingEntity(_))
+                  : throwError(
+                      () =>
+                        new NotFoundException(
+                          `Rating with id '${taskId}' not found`,
+                        ),
+                    ),
+              ),
+            )
+          : throwError(
+              () =>
+                new NotFoundException(`Rating with id '${taskId}' not found`),
+            ),
+      ),
+    );
+
+  /**
+   * Check if already exists and add task in list
+   *
+   * @param rating Rating to create
    *
    * @returns {Observable<RatingEntity>}
    */
-  add = (rate: RatingDto): Observable<RatingEntity> => {
-    rate.date = moment().utc().format();
-    return this._rateDao.add(rate).pipe(
+  add = (rating: RatingDto): Observable<RatingEntity> => {
+    rating.date = moment().utc().format();
+    return this._ratingDao.add(rating).pipe(
       catchError((e) =>
-        throwError(() => new UnprocessableEntityException(e.message)),
+        throwError(() => {
+          switch (e.code) {
+            case 11000:
+              return new ConflictException(
+                'A rating associated to this task already exists',
+              );
+          }
+        }),
       ),
       map((_: Rating) => new RatingEntity(_)),
     );
@@ -86,19 +134,19 @@ export class RatingService {
    * Update
    *
    * @param {string} id
-   * @param Rate data to update
+   * @param rating data to update
    *
    * @returns {Observable<RatingEntity>}
    */
-  update = (id: string, Rate: RatingDto): Observable<RatingEntity> =>
-    this._rateDao
-      .update(id, Rate)
+  update = (id: string, rating: UpdateRatingDto): Observable<RatingEntity> =>
+    this._ratingDao
+      .update(id, rating)
       .pipe(
         mergeMap((_: Rating) =>
           !!_
             ? of(new RatingEntity(_))
             : throwError(
-                () => new NotFoundException(`Rate with id '${id}' not found`),
+                () => new NotFoundException(`Rating with id '${id}' not found`),
               ),
         ),
       );
@@ -111,7 +159,7 @@ export class RatingService {
    * @returns {Observable<void>}
    */
   delete = (id: string): Observable<void> =>
-    this._rateDao.delete(id).pipe(
+    this._ratingDao.delete(id).pipe(
       catchError((e) =>
         throwError(() => new UnprocessableEntityException(e.message)),
       ),
@@ -119,7 +167,7 @@ export class RatingService {
         !!_
           ? of(undefined)
           : throwError(
-              () => new NotFoundException(`Rate with id '${id}' not found`),
+              () => new NotFoundException(`Rating with id '${id}' not found`),
             ),
       ),
     );

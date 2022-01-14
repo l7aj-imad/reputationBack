@@ -13,6 +13,15 @@ export class RatingEntity {
   id: string;
 
   @ApiProperty({
+    name: 'taskId',
+    description: 'id of the task',
+    example: '3',
+  })
+  @Expose()
+  @Type(() => String)
+  taskId: string;
+
+  @ApiProperty({
     name: 'clientId',
     description: 'id of the client',
     example: '3',
@@ -23,7 +32,7 @@ export class RatingEntity {
 
   @ApiProperty({
     name: 'professionalId',
-    description: 'id of the professionnel',
+    description: 'id of the professional',
     example: '3',
   })
   @Expose()

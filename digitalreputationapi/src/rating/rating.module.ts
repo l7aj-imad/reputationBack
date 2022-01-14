@@ -4,12 +4,15 @@ import { RatingController } from './rating.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Rating, RatingSchema } from './rating.schema';
 import { RatingDao } from './dao/rating.dao';
+import { ProfessionalPartnerAPI } from '../services/professional-partner.api';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     MongooseModule.forFeature([{ name: Rating.name, schema: RatingSchema }]),
   ],
-  providers: [RatingService, RatingDao, Logger],
+  providers: [ProfessionalPartnerAPI, RatingService, RatingDao, Logger],
   controllers: [RatingController],
 })
 export class RatingModule {}

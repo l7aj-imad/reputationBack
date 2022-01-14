@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { Rating, RateDocument } from '../rating.schema';
+import { Model, Types } from 'mongoose';
+import { RateDocument, Rating } from '../rating.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { defaultIfEmpty, from, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { RatingDto } from '../dto/rating.dto';
+import { UpdateRatingDto } from '../dto/update-rating.dto';
 
 @Injectable()
 export class RatingDao {
@@ -19,25 +20,11 @@ export class RatingDao {
   ) {}
 
   /**
-   * Returns one Rate of the list matching id in parameter
-   *
-   * @param {string} id of the Rate in the db
-   *
-   * @return {Observable<Rating | void>}
-   */
-  findById = (id: string): Observable<Rating | void> =>
-    from(this._rateModel.findById(id)).pipe(
-      filter((doc: RateDocument) => !!doc),
-      map((doc: RateDocument) => doc.toJSON()),
-      defaultIfEmpty(undefined),
-    );
-
-  /**
    * Returns one Rate of the list matching professional id in parameter
    *
    * @param {string} id of the professional in the db
    *
-   * @return {Observable<Rating | void>}
+   * @return {Observable<Rating[] | void>}
    */
   findByProfessionalId = (id: string): Observable<Rating[] | void> =>
     from(this._rateModel.find({ professionalId: id })).pipe(
@@ -47,9 +34,29 @@ export class RatingDao {
     );
 
   /**
-   * Returns  list of rates
+   * Returns one Rate of the list matching task id or rating id in parameter
    *
-   * @return {Observable<Rating | void>}
+   * @param {string} id of the task or the rating in the db
+   *
+   * @return {Observable<Rating[] | void>}
+   */
+  findById = (id: string): Observable<Rating | void> =>
+    from(
+      this._rateModel.find(() =>
+        Types.ObjectId.isValid(id)
+          ? { $or: [{ _id: id }, { taskId: id }] }
+          : { taskId: id },
+      ),
+    ).pipe(
+      filter((doc: RateDocument) => !!doc),
+      map((doc: RateDocument) => doc.toJSON()),
+      defaultIfEmpty(undefined),
+    );
+
+  /**
+   * Returns list of ratings
+   *
+   * @return {Observable<Rating[] | void>}
    */
   find = (): Observable<Rating[] | void> => {
     return from(this._rateModel.find()).pipe(
@@ -60,47 +67,66 @@ export class RatingDao {
   };
 
   /**
-   * Check if name already exists with index and add it in Rate list
+   * Add a new rating
    *
-   * @param {RatingDto} rate to create
+   * @param {RatingDto} rating Rating to create
    *
    * @return {Observable<Rating>}
    */
-  add = (rate: RatingDto): Observable<Rating> =>
-    from(new this._rateModel(rate).save()).pipe(
+  add = (rating: RatingDto): Observable<Rating> =>
+    from(new this._rateModel(rating).save()).pipe(
       map((doc: RateDocument) => doc.toJSON()),
       defaultIfEmpty(undefined),
     );
 
   /**
-   * Update
+   * Update the rating
    *
-   * @param {string} id
-   * @param {RatingDto} Rate
+   * @param {string} id Id of the rating
+   * @param {UpdateRatingDto} rating New rating
    *
    * @return {Observable<Rating | void>}
    */
-  update = (id: string, Rate: RatingDto): Observable<Rating | void> =>
+  update = (id: string, rating: UpdateRatingDto): Observable<Rating | void> =>
     from(
-      this._rateModel.findByIdAndUpdate(id, Rate, {
-        new: true,
-        runValidators: true,
-      }),
+      this._rateModel.findOneAndUpdate(
+        Types.ObjectId.isValid(id)
+          ? { $or: [{ _id: id }, { taskId: id }] }
+          : { taskId: id },
+        { $set: rating },
+        {
+          new: true,
+          runValidators: true,
+        },
+      ),
     ).pipe(
       filter((doc: RateDocument) => !!doc),
-      map((doc: RateDocument) => doc.toJSON()),
+      map((doc: RateDocument) => {
+        console.log(id);
+        return doc.toJSON();
+      }),
       defaultIfEmpty(undefined),
     );
 
   /**
-   * Delete
+   * Delete one task by id or the task id
    *
-   * @param {string} id
+   * @param {string} id Id of the task or the rating
    *
    * @return {Observable<Rating | void>}
    */
   delete = (id: string): Observable<Rating | void> =>
-    from(this._rateModel.findByIdAndRemove(id)).pipe(
+    from(
+      this._rateModel.findOneAndRemove(
+        Types.ObjectId.isValid(id)
+          ? { $or: [{ _id: id }, { taskId: id }] }
+          : { taskId: id },
+        {
+          new: true,
+          runValidators: true,
+        },
+      ),
+    ).pipe(
       filter((doc: RateDocument) => !!doc),
       map((doc: RateDocument) => doc.toJSON()),
       defaultIfEmpty(undefined),

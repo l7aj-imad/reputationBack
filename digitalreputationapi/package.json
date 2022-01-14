@@ -21,23 +21,26 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^8.0.0",
+    "@nestjs/common": "^8.2.5",
     "@nestjs/config": "^1.1.6",
     "@nestjs/core": "^8.0.0",
     "@nestjs/mongoose": "^9.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.1.5",
-    "class-transformer": "^0.5.1",
+    "@nestjs/axios": "^0.0.4",
+    "class-transformer": "^0.5.0",
     "class-validator": "^0.13.2",
     "config": "^3.3.6",
+    "express": "^4.0.0",
     "fastify": "^3.25.0",
     "moment": "^2.29.1",
     "mongoose": "^6.1.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0",
+    "rxjs": "^7.1.0",
     "swagger": "^0.7.5",
-    "swagger-ui-express": "^4.3.0"
+    "swagger-ui-express": "^4.3.0",
+    "zone.js": "~0.10.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -60,7 +63,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "webpack": "^5.0.0"
   },
   "jest": {
     "moduleFileExtensions": [

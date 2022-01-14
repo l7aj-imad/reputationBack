@@ -26,7 +26,6 @@ import * as Config from 'config';
           : ''),
     ),
   ],
-
   controllers: [],
   providers: [],
 })

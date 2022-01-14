@@ -1,6 +1,6 @@
 server:
   host: 0.0.0.0
-  port: 3000
+  port: 3001
   cors:
     - "http://0.0.0.0:4201"
     - "http://localhost:4200"
@@ -9,6 +9,13 @@ server:
     - "http://51.178.82.205:4201"
     - "http://51.68.95.251:5000"
     - "http://dirpro.houseskipper.fr"
+api:
+  professional_partner:
+    protocol: "http"
+    host: 0.0.0.0
+    port: 3000
+    uri:
+      task: "demande/:id"
 swagger:
   title: e-Reputation
   description: API de l'e-Reputation
