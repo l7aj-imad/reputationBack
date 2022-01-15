@@ -122,6 +122,35 @@ export class RatingController {
   }
 
   /**
+   * Handler to answer to GET /rating/findById/:id route
+   *
+   * @param {HandlerParams} params list of route params to take a rating or task id
+   *
+   * @returns Observable<RatingEntity>
+   */
+  @ApiOkResponse({
+    description:
+      'Returns if a rating with the provided rating or task id exists',
+    type: RatingEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Some of the provided parameters are unexpected',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "The request can't be performed in the database",
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Unique identifier of the task or rating id in the database',
+    type: String,
+    allowEmptyValue: false,
+  })
+  @Get('exists/:id')
+  exists(@Param() params: HandlerParams): Observable<boolean | void> {
+    return this.__rateService.exists(params.id);
+  }
+
+  /**
    * Handler to answer to POST /rating/add route
    *
    * @param ratingDto New rating to create

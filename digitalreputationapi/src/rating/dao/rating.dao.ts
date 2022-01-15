@@ -146,4 +146,28 @@ export class RatingDao {
       map((doc: RateDocument) => doc.toJSON()),
       defaultIfEmpty(undefined),
     );
+
+  /**
+   * Returns if a rating exists
+   *
+   * @param {string} id Id of the task or the rating
+   *
+   * @return {Observable<Rating | void>}
+   */
+  exists = (id: string): Observable<boolean | void> =>
+    from(
+      this._rateModel.findOne(
+        Types.ObjectId.isValid(id)
+          ? { $or: [{ _id: id }, { taskId: id }] }
+          : { taskId: id },
+        {
+          new: true,
+          runValidators: true,
+        },
+      ),
+    ).pipe(
+      filter((doc: RateDocument) => !!doc),
+      map((doc: RateDocument) => !!doc),
+      defaultIfEmpty(false),
+    );
 }

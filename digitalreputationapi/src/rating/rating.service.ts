@@ -7,7 +7,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { catchError, defaultIfEmpty, Observable, of, throwError } from 'rxjs';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { filter, map, mergeMap, tap } from 'rxjs/operators';
 import { RatingDao } from './dao/rating.dao';
 import { RatingEntity } from './entity/rating.entity';
 import { Rating } from './rating.schema';
@@ -179,5 +179,20 @@ export class RatingService {
               () => new NotFoundException(`Rating with id '${id}' not found`),
             ),
       ),
+    );
+
+  /**
+   * Returns if rating exists
+   *
+   * @param {string} id
+   *
+   * @returns {Observable<void>}
+   */
+  exists = (id: string): Observable<boolean> =>
+    this._ratingDao.exists(id).pipe(
+      catchError((e) =>
+        throwError(() => new UnprocessableEntityException(e.message)),
+      ),
+      tap((_: boolean) => of(false)),
     );
 }

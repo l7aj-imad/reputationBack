@@ -45,7 +45,7 @@ export class RatingEntity {
     example: '3',
   })
   @Expose()
-  @Type(() => String)
+  @Type(() => Number)
   price: number;
 
   @ApiProperty({
@@ -54,7 +54,7 @@ export class RatingEntity {
     example: '3',
   })
   @Expose()
-  @Type(() => String)
+  @Type(() => Number)
   time: number;
 
   @ApiProperty({
@@ -63,7 +63,7 @@ export class RatingEntity {
     example: '3',
   })
   @Expose()
-  @Type(() => String)
+  @Type(() => Number)
   quality: number;
 
   @ApiProperty({
@@ -72,7 +72,7 @@ export class RatingEntity {
     example: '3',
   })
   @Expose()
-  @Type(() => String)
+  @Type(() => Number)
   personality: number;
 
   @ApiProperty({
