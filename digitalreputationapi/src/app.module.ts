@@ -16,14 +16,11 @@ import * as Config from 'config';
           : '') +
         Config.get<string>('mongodb.host') +
         ':' +
-        Config.get<string>('mongodb.port') +
-        '/' +
-        Config.get<string>('mongodb.database') +
-        Config.get<string>('mongodb.uri_suffix') +
-        (Config.get<string>('mongodb.uri_suffix').indexOf('authSource') >= -1 &&
-        Config.get<string>('mongodb.authdb')
-          ? Config.get<string>('mongodb.authdb')
-          : ''),
+        Config.get<string>('mongodb.port'),
+      {
+        dbName: Config.get<string>('mongodb.database'),
+        authSource: Config.get<string>('mongodb.authdb'),
+      },
     ),
   ],
   controllers: [],
