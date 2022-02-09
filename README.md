@@ -4,9 +4,6 @@
 
 Ce dépôt contient le code source de l'API responsable de la gestion des notations/avis et de la réputation digitale d'un professionnel.
 
-Si vous voulez installer le projet et le tester, suivez les instructions fournies dans le readme du dépôt suivant :
-- [dirproinit](https://gitlab.com/digital-reputation/dirproinit) qui gère le déploiement réalisé avec des scripts de démarrage, il contient également les Bots qui permettent de peupler la base de données.
-
 ## Structure du dépôt
 
 Le dépôt se structure de la manière suivante:
@@ -17,22 +14,17 @@ Le dépôt se structure de la manière suivante:
 
 ## Installation
 
-Pour installer le projet, le tester et pouvoir continuer le développement, il faut d'abord mettre en place la base de données mongo.
-Pour ce faire, nous avons créé un [docker-compose.yml](https://gitlab.com/digital-reputation/dirproinit/-/blob/master/dev-env/docker-compose.yml) accessible dans le dépôt [dirproinit](https://gitlab.com/digital-reputation/dirproinit).
-- Clôner ce dépôt avec:
+Pour exécuter l'API, une base de données MongoDB est nécessaire. Il est possible d'utiliser une configuration Docker pour lancer la base de données sans aucune configuration nécessaire :
+[Docker MongoDB](https://gitlab.com/RaphaelKimm/mongodb-init)
+
+- Clonez ce dépôt avec:
 ```bash
 $ git clone https://gitlab.com/digital-reputation/dirproinit.git
 ```
 
-- Allez ensuite dans le dossier dev-env, puis lancer le docker-compose:
+- Allez ensuite dans le dossier contenant docker-compose.yml, puis lancer le docker-compose:
 ```bash
 $ docker-compose up
-```
-
-S'il n'y a pas d'erreurs, vous pouvez suivre les étapes suivantes:
-- Clôner ce dépôt avec:
-```bash
-$ git clone https://gitlab.com/digital-reputation/digitalreputationapi.git
 ```
 
 Le dossier digitalreputationapi/config contient les fichiers de configuration de l'API. Un point important concerne la configuration de la base de données :
@@ -49,7 +41,7 @@ mongodb:
 ```
 Si vous avez modifié les informations de connexion pour la base de données locale, il faut les référencer dans cette partie, surtout en ce qui concerne host (adresse IP), login et password.
 
-- Quand vous testez l'application en local, il faut modifier l'addresse de connexion à la base de données mongo qui se trouve dans [le fichier de configuration](https://gitlab.com/digital-reputation/digitalreputationapi/-/blob/master/digitalreputationapi/config/default.yml) à la ligne 19 et remplacer mongo par 0.0.0.0, mongo est utilisé lors du déploiement puisqu'il permet de se connecter au container mongo qui contient la base de données. (donc ça doit rester mongo sur la branche master)
+- Quand vous testez l'application en local, il faut modifier l'adresse de connexion à la base de données mongo qui se trouve dans [le fichier de configuration](https://gitlab.com/digital-reputation/digitalreputationapi/-/blob/master/digitalreputationapi/config/default.yml) à la ligne 19 et remplacer mongo par 0.0.0.0, mongo est utilisé lors du déploiement puisqu'il permet de se connecter au container mongo qui contient la base de données. (donc ça doit rester mongo sur la branche master)
 
 - Si vous souhaitez juste tester l'application, vous pouvez aussi utiliser docker de la manière suivante:
 ```bash
@@ -130,7 +122,7 @@ $ yarn run start
 ```
 
 - Vous pouvez désormais accéder à l'API à l'addresse: http://localhost:3001/
-- Mais nous vous conseillons de d'abord vous familiariser avec ce qui a été fait avec la documentation swagger qui a également été mise en place et qui est disponible à l'addresse: http://localhost:3001/documentation
+- Mais nous vous conseillons de d'abord vous familiariser avec ce qui a été fait avec la documentation Swagger qui a également été mise en place et qui est disponible à l'addresse: http://localhost:3001/documentation
 
 
 ## Environnement de développement
