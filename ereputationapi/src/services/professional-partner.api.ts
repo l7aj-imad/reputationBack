@@ -10,6 +10,7 @@ import {
 import { filter } from 'rxjs/operators';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Caller vers l'API de Professional Partner
@@ -18,17 +19,19 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 export class ProfessionalPartnerAPI {
   private _backends;
 
-  constructor(private _http: HttpService) {
+  constructor(private _http: HttpService, _configService: ConfigService) {
     const ret = {};
-    let back = `${Config.get(
+    let back = `${_configService.get(
       'api.professional_partner.protocol',
-    )}://${Config.get('api.professional_partner.host')}`;
-    if (Config.get('api.professional_partner.port')) {
+    )}://${_configService.get('api.professional_partner.host')}`;
+    if (_configService.get('api.professional_partner.port')) {
       back += `:${Config.get('api.professional_partner.port')}/`;
     }
-    Object.keys(Config.get('api.professional_partner.uri')).forEach(
+    Object.keys(_configService.get('api.professional_partner.uri')).forEach(
       (k) =>
-        (ret[k] = `${back}${Config.get('api.professional_partner.uri')[k]}`),
+        (ret[k] = `${back}${
+          _configService.get('api.professional_partner.uri')[k]
+        }`),
     );
 
     this._backends = ret;
