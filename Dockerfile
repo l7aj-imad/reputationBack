@@ -1,8 +1,8 @@
 FROM node:12 AS builder
 WORKDIR /app
-COPY ./digitalreputationapi/package*.json ./
+COPY ereputationapi/package*.json ./
 RUN yarn install
-COPY ./digitalreputationapi .
+COPY ereputationapi .
 RUN yarn run build
 
 # -------------------------

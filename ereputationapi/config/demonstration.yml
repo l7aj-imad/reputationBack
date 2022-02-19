@@ -27,7 +27,7 @@ mongodb:
   password: 'password'
   host: 'localhost'
   port: '27017'
-  database: 'digrep'
+  database: 'ereputation'
   uri_prefix: 'mongodb://'
   uri_suffix: '?authSource='
   authdb: 'admin'

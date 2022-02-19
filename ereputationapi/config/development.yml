@@ -1,0 +1,33 @@
+server:
+  host: 0.0.0.0
+  port: 3002
+  cors:
+    - "http://0.0.0.0:4201"
+    - "http://localhost:4200"
+    - "http://127.0.0.1:4201"
+    - "http://localhost:4201"
+    - "http://51.178.82.205:4201"
+    - "http://51.68.95.251:5000"
+    - "http://dirpro.houseskipper.fr"
+api:
+  professional_partner:
+    protocol: "http"
+    host: 0.0.0.0
+    port: 3000
+    uri:
+      task: "demande/:id"
+swagger:
+  title: e-Reputation
+  description: API de l'e-Reputation
+  version: 1.0
+  tag: e-Reputation
+  path: documentation
+mongodb:
+  login: 'root'
+  password: 'password'
+  host: 'localhost'
+  port: '27017'
+  database: 'ereputation'
+  uri_prefix: 'mongodb://'
+  uri_suffix: '?authSource='
+  authdb: 'admin'

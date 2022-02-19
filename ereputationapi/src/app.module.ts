@@ -2,11 +2,16 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RatingModule } from './rating/rating.module';
 import * as Config from 'config';
+import { ConfigModule } from '@nestjs/config';
+import configuration from '../config/configuration';
 
 @Module({
   imports: [
     RatingModule,
     MongooseModule.forRoot(AppModule.getURI(), AppModule.getOptions()),
+    ConfigModule.forRoot({
+      load: [configuration],
+    }),
   ],
   controllers: [],
   providers: [],

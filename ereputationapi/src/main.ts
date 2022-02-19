@@ -2,15 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import * as Config from 'config';
-import { AppConfig, SwaggerConfig } from './app.types';
+import { SwaggerConfig } from './app.types';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
-async function bootstrap(config: AppConfig, swaggerConfig: SwaggerConfig) {
+async function bootstrap(swaggerConfig: SwaggerConfig) {
+  Logger.log(`Running in ${process.env.NODE_ENV} mode`, 'bootstrap');
+
   // create NestJS application
   const app = await NestFactory.create(AppModule);
+  const config = app.get<ConfigService>(ConfigService);
 
   // enable CORS for NG Application's calls
-  await app.enableCors({ origin: config.cors });
+  await app.enableCors({ origin: config.get('server.cors') });
 
   // use global pipe validation
   await app.useGlobalPipes(
@@ -37,14 +41,13 @@ async function bootstrap(config: AppConfig, swaggerConfig: SwaggerConfig) {
   SwaggerModule.setup(swaggerConfig.path, app, linkDocument);
 
   // launch server
-  await app.listen(config.port, config.host);
+  await app.listen(config.get('server.port'), config.get('server.host'));
   Logger.log(
-    `Application served at http://${config.host}:${config.port}`,
+    `Application served at http://${config.get('server.host')}:${config.get(
+      'server.port',
+    )}`,
     'bootstrap',
   );
 }
 
-bootstrap(
-  Config.get<AppConfig>('server'),
-  Config.get<SwaggerConfig>('swagger'),
-);
+bootstrap(Config.get<SwaggerConfig>('swagger'));
